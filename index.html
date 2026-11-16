@@ -1,0 +1,508 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Calculate your exact age in years, months and days with our free Age Calculator.">
+<title>Age Calculator Pro</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  padding: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg,#667eea,#764ba2);
+  transition: .3s;
+}
+
+.container {
+  width: 100%;
+  max-width: 520px;
+  background: white;
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 20px 60px #0003;
+  transition: .3s;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.theme-btn {
+  border: none;
+  background: #f0f0f8;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 30px;
+  color: #252545;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #888;
+  margin-bottom: 30px;
+  line-height: 1.5;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #444;
+}
+
+input {
+  width: 100%;
+  padding: 15px;
+  border: 2px solid #e3e3ee;
+  border-radius: 12px;
+  font-size: 16px;
+  margin-bottom: 18px;
+  background: white;
+  color: #222;
+}
+
+input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+button {
+  cursor: pointer;
+  transition: .2s;
+}
+
+.calculate {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(90deg,#667eea,#764ba2);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.calculate:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 18px #667eea55;
+}
+
+#error {
+  color: #d33;
+  text-align: center;
+  margin-top: 15px;
+}
+
+#result {
+  display: none;
+  margin-top: 28px;
+  animation: appear .5s ease;
+}
+
+@keyframes appear {
+  from {opacity: 0; transform: translateY(15px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+.result-heading {
+  text-align: center;
+  margin-bottom: 18px;
+  color: #333;
+}
+
+.age-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 10px;
+}
+
+.age-box {
+  text-align: center;
+  background: #f0f2ff;
+  padding: 20px 5px;
+  border-radius: 14px;
+}
+
+.age-box strong {
+  display: block;
+  color: #667eea;
+  font-size: 34px;
+  margin-bottom: 5px;
+}
+
+.age-box span {
+  color: #666;
+  font-size: 13px;
+}
+
+.details {
+  margin-top: 18px;
+  padding: 18px;
+  background: #f8f8fc;
+  border-radius: 14px;
+  line-height: 2.3;
+  color: #555;
+}
+
+.details strong {
+  color: #667eea;
+  float: right;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.actions button {
+  flex: 1;
+  padding: 13px 5px;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+.copy {
+  background: #667eea;
+  color: white;
+}
+
+.reset {
+  background: #eeeef5;
+  color: #555;
+}
+
+.footer {
+  text-align: center;
+  color: #aaa;
+  font-size: 12px;
+  margin-top: 28px;
+}
+
+/* DARK MODE */
+
+body.dark {
+  background: linear-gradient(135deg,#17172d,#292044);
+}
+
+.dark .container {
+  background: #202035;
+}
+
+.dark h1,
+.dark .result-heading {
+  color: white;
+}
+
+.dark label {
+  color: #ddd;
+}
+
+.dark .subtitle {
+  color: #aaa;
+}
+
+.dark input {
+  background: #303047;
+  color: white;
+  border-color: #45455d;
+}
+
+.dark .age-box {
+  background: #303047;
+}
+
+.dark .age-box span {
+  color: #ccc;
+}
+
+.dark .details {
+  background: #303047;
+  color: #ddd;
+}
+
+.dark .reset,
+.dark .theme-btn {
+  background: #41415b;
+  color: white;
+}
+
+.dark .footer {
+  color: #777;
+}
+
+@media(max-width:400px) {
+  .container {
+    padding: 22px 16px;
+  }
+  h1 {
+    font-size: 25px;
+  }
+  .age-box strong {
+    font-size: 27px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="top">
+    <div class="logo">🎂 Age Calculator Pro</div>
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" aria-label="Toggle dark mode">🌙</button>
+  </div>
+
+  <h1>Calculate Your Age</h1>
+  <p class="subtitle">Discover exactly how long you have been alive!</p>
+
+  <label for="dob">Date of Birth</label>
+  <input type="date" id="dob">
+
+  <button class="calculate" onclick="calculateAge()">
+    Calculate My Age →
+  </button>
+
+  <p id="error" role="alert"></p>
+
+  <div id="result" aria-live="polite">
+
+    <h2 class="result-heading">🎉 Your Exact Age</h2>
+
+    <div class="age-grid">
+      <div class="age-box">
+        <strong id="years">0</strong>
+        <span>Years</span>
+      </div>
+
+      <div class="age-box">
+        <strong id="months">0</strong>
+        <span>Months</span>
+      </div>
+
+      <div class="age-box">
+        <strong id="days">0</strong>
+        <span>Days</span>
+      </div>
+    </div>
+
+    <div class="details">
+      <p>Total days lived <strong id="totalDays">0</strong></p>
+      <p>Total weeks lived <strong id="totalWeeks">0</strong></p>
+      <p>Total months lived <strong id="totalMonths">0</strong></p>
+      <p>Next birthday <strong id="birthday">0 days</strong></p>
+    </div>
+
+    <div class="actions">
+      <button class="copy" onclick="copyResult()">📋 Copy Result</button>
+      <button class="reset" onclick="resetCalculator()">↻ Reset</button>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    © 2026 Age Calculator Pro · Made with ❤️
+  </div>
+
+</div>
+
+<script>
+const dobInput = document.getElementById("dob");
+
+function utcDate(y,m,d) {
+  return new Date(Date.UTC(y,m,d));
+}
+
+function addMonthsClamped(date,count) {
+  const index = date.getUTCMonth() + count;
+  const year = date.getUTCFullYear() + Math.floor(index / 12);
+  const month = ((index % 12) + 12) % 12;
+  const lastDay = utcDate(year,month+1,0).getUTCDate();
+
+  return utcDate(year,month,Math.min(date.getUTCDate(),lastDay));
+}
+
+function birthdayIn(year,month,day) {
+  const lastDay = utcDate(year,month,0).getUTCDate();
+  return utcDate(year,month-1,Math.min(day,lastDay));
+}
+
+function calculateAge() {
+  const error = document.getElementById("error");
+  const result = document.getElementById("result");
+
+  error.textContent = "";
+  result.style.display = "none";
+
+  if(!dobInput.value) {
+    error.textContent = "Please select your date of birth.";
+    return;
+  }
+
+  const [y,m,d] = dobInput.value.split("-").map(Number);
+  const birth = utcDate(y,m-1,d);
+
+  // Read today's local calendar date
+  const today = new Date();
+  const now = utcDate(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  );
+
+  if(
+    birth.getUTCFullYear() !== y ||
+    birth.getUTCMonth() !== m-1 ||
+    birth.getUTCDate() !== d ||
+    birth > now
+  ) {
+    error.textContent = "Please enter a valid date in the past.";
+    return;
+  }
+
+  let years = now.getUTCFullYear() - y;
+  let anniversary = addMonthsClamped(birth,years*12);
+
+  if(anniversary > now) {
+    years--;
+    anniversary = addMonthsClamped(birth,years*12);
+  }
+
+  let months =
+    (now.getUTCFullYear()-anniversary.getUTCFullYear())*12 +
+    now.getUTCMonth()-anniversary.getUTCMonth();
+
+  let monthDate = addMonthsClamped(anniversary,months);
+
+  if(monthDate > now) {
+    months--;
+    monthDate = addMonthsClamped(anniversary,months);
+  }
+
+  const days = Math.round((now-monthDate)/86400000);
+  const totalDays = Math.round((now-birth)/86400000);
+
+  const totalMonths = years*12+months;
+
+  let nextBirthday = birthdayIn(now.getUTCFullYear(),m,d);
+
+  if(nextBirthday <= now) {
+    nextBirthday = birthdayIn(now.getUTCFullYear()+1,m,d);
+  }
+
+  const daysUntil = Math.round((nextBirthday-now)/86400000);
+
+  document.getElementById("years").textContent = years;
+  document.getElementById("months").textContent = months;
+  document.getElementById("days").textContent = days;
+
+  document.getElementById("totalDays").textContent =
+    totalDays.toLocaleString();
+
+  document.getElementById("totalWeeks").textContent =
+    Math.floor(totalDays/7).toLocaleString();
+
+  document.getElementById("totalMonths").textContent =
+    totalMonths.toLocaleString();
+
+  document.getElementById("birthday").textContent =
+    daysUntil === 0 ? "Today! 🎂" : daysUntil+" days";
+
+  result.style.display = "block";
+}
+
+function resetCalculator() {
+  dobInput.value = "";
+  document.getElementById("result").style.display = "none";
+  document.getElementById("error").textContent = "";
+}
+
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+
+  const dark = document.body.classList.contains("dark");
+  document.getElementById("themeBtn").textContent =
+    dark ? "☀️" : "🌙";
+}
+
+function copyResult() {
+  const text =
+    "My Age Calculator Results\n" +
+    "Age: " +
+    document.getElementById("years").textContent + " years, " +
+    document.getElementById("months").textContent + " months, " +
+    document.getElementById("days").textContent + " days\n" +
+    "Total days lived: " +
+    document.getElementById("totalDays").textContent + "\n" +
+    "Next birthday: " +
+    document.getElementById("birthday").textContent;
+
+  if(navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text)
+      .then(() => alert("Result copied successfully!"))
+      .catch(() => fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text) {
+  const area = document.createElement("textarea");
+  area.value = text;
+  area.style.position = "fixed";
+  area.style.opacity = "0";
+  document.body.appendChild(area);
+  area.select();
+
+  try {
+    document.execCommand("copy");
+    alert("Result copied!");
+  } catch(e) {
+    alert("Unable to copy. Please select and copy the result manually.");
+  }
+
+  area.remove();
+}
+
+// Set maximum selectable birth date to today
+const today = new Date();
+dobInput.max = [
+  today.getFullYear(),
+  String(today.getMonth()+1).padStart(2,"0"),
+  String(today.getDate()).padStart(2,"0")
+].join("-");
+
+</script>
+</body>
+</html>
